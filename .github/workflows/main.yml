@@ -1,0 +1,42 @@
+name: Build Android APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-size: 20
+
+      - name: Install Dependencies
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          mkdir -p www
+          echo '{"name":"app","private":true}' > package.json
+
+      - name: Initialize Capacitor Project
+        run: |
+          npx cap add android
+          npx cap sync
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build APK with Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MiApp-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
