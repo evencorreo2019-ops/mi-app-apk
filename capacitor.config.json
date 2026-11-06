@@ -1,0 +1,12 @@
+{
+  "appId": "com.systema.systhue",
+  "appName": "resmenu",
+  "webDir": "www.systhue.com",
+  "server": {
+    "url": "https://genesis.edu.gt/sysdemos/",
+    "allowNavigation": [
+      "systhue.com",
+      "*.systhue.com"
+    ]
+  }
+}
