@@ -15,19 +15,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
 
       - name: Create Base Project Structures
         run: |
           mkdir -p www
-          touch www/index.html
           echo '<!DOCTYPE html><html><head><title>App</title></head><body></body></html>' > www/index.html
           echo '{"name":"mi-app-apk","version":"1.0.0","private":true}' > package.json
 
       - name: Install Capacitor Dependencies
         run: |
-          npm install @capacitor/core@latest @capacitor/cli@latest
-          npm install @capacitor/android@latest
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
 
       - name: Initialize and Sync Capacitor
         run: |
