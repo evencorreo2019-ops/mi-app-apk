@@ -1,6 +1,10 @@
 name: Build Android APK
 on: [push, workflow_dispatch]
 
+permissions:
+  contents: write
+  actions: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,31 +15,38 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-size: 20
+          node-version: 20
 
-      - name: Install Dependencies
+      - name: Create Base Project Structures
         run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
           mkdir -p www
-          echo '{"name":"app","private":true}' > package.json
+          touch www/index.html
+          echo '<!DOCTYPE html><html><head><title>App</title></head><body></body></html>' > www/index.html
+          echo '{"name":"mi-app-apk","version":"1.0.0","private":true}' > package.json
 
-      - name: Initialize Capacitor Project
+      - name: Install Capacitor Dependencies
+        run: |
+          npm install @capacitor/core@latest @capacitor/cli@latest
+          npm install @capacitor/android@latest
+
+      - name: Initialize and Sync Capacitor
         run: |
           npx cap add android
           npx cap sync
 
-      - name: Setup Java
+      - name: Setup Java Jdk
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Build APK with Gradle
         run: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload Finished APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MiApp-APK
